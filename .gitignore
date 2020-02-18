@@ -24,3 +24,6 @@ hs_err_pid*
 
 # Twitter4J API tokens and keys
 twitter4j.properties
+
+# Files with information
+files/*.txt
