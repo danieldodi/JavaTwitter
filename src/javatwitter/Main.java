@@ -11,6 +11,7 @@ import java.util.Scanner;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 
 /**
  *
@@ -24,8 +25,8 @@ public class Main {
         String user = input.nextLine();
         System.out.println("");
         
-        // Calls getTwitterInstance() method and assigns it to a new Twitter object
-        Twitter twitter = ConnectionAPI.getTwitterInstance();
+        // Get Twitter instance to allow connection and assigns it to a new Twitter object
+        Twitter twitter = new TwitterFactory().getInstance();
         
         // Calls getUserTimeline() method receiving the twitter instance and inputed username
         getUserTimeline(twitter, user);
