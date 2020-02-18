@@ -26,4 +26,4 @@ hs_err_pid*
 twitter4j.properties
 
 # Files with information
-files/*.txt
+/files

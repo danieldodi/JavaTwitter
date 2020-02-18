@@ -1,4 +1,4 @@
-Twits from user @dadodi24 at 18/02/2020 20:06:54
+Twits from user @dadodi24 at 18/02/2020 20:15:05
 
 Twit #1
 @AlexParla De momento solo pilla y guarda los 20 ultimos twits que haya hecho un usuario, estoy experimentando con la API de Twitter a ver que se puede hacer
