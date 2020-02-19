@@ -22,64 +22,100 @@ import twitter4j.TwitterFactory;
  */
 public class Main {
     
+    // Get Twitter instance to allow connection and assigns it to a new Twitter object
+    private static final Twitter twitter = new TwitterFactory().getInstance();
+    
     public static void main(String[] args) throws TwitterException, IOException {
         // If files path doesn't exist, create that path
         Path filesPath = Paths.get("files");
-        if (Files.notExists(filesPath)) {
+        if(Files.notExists(filesPath)) {
             new File("files").mkdir();
         }
         
-        // Scanner for username input
+        // Menu for all the functions of the app
+        boolean exit = false;
+        while(exit != true) {
+            int option = menu();
+            
+            switch(option) {
+                case 0:
+                    exit = true;
+                    System.out.println("");
+                    break;
+                
+                case 1:
+                    System.out.print("Enter username: ");
+                    String user = enterString();
+                    System.out.println("");
+                    // Calls getUserTimeline() method receiving the twitter instance and inputed username
+                    getUserTimeline(twitter, user);
+                    System.out.println("");
+                    break;
+            }
+        }
+    }
+
+    private static int menu() {
+        System.out.println("TWITTER4J MENU");
+        System.out.println("1. Get user's last 20 tweets");
+        System.out.println("2. Get user's favourited tweet");
+        System.out.println("0. Exit");
+        System.out.print("Select option: ");
         Scanner input = new Scanner(System.in);
-        System.out.print("Enter username: ");
-        String user = input.nextLine();
-        System.out.println("");
+        int option = input.nextInt();
         
-        // Get Twitter instance to allow connection and assigns it to a new Twitter object
-        Twitter twitter = new TwitterFactory().getInstance();
+        return option;
+    } 
+    
+    private static String enterString() {
+        // Scanner for string variables
+        Scanner input = new Scanner(System.in);
+        String string = input.nextLine();
         
-        // Calls getUserTimeline() method receiving the twitter instance and inputed username
-        getUserTimeline(twitter, user);
+        return string;
     }
 
     // Method to retrieve last 20 twits from an user
     private static void getUserTimeline(Twitter twitter, String user) throws TwitterException, IOException {
         List<Status> statuses = twitter.getUserTimeline(user);
         String userName = "@" + statuses.get(0).getUser().getScreenName();
-        int twitNumber = 1;
+        int tweetNumber = 1;
         
         // Get the current date and time and format it to desired layout
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         LocalDateTime ldt = LocalDateTime.now();
         
-        System.out.println("Latest twits: ");
+        System.out.println("Latest tweets: ");
         
-        // Scan all the twits and prints them
+        // Scan all the tweets and prints them
         for (Status status : statuses) {
-            String twits = "Twit #" + twitNumber++ + "\n\n" + status.getText() + "\n________________________________________________";
-            System.out.println(twits + "\n");
-        } twitNumber = 1;
+            String tweets = "Tweet #" + tweetNumber++ + "\n\n" + status.getText() + "\n________________________________________________";
+            System.out.println(tweets + "\n");
+        } tweetNumber = 1;
         
-        // Option to save twits to a .txt file
-        System.out.print("Do you want to save these twits? [Y/N]: ");
-        Scanner input = new Scanner(System.in);
-        String option = input.nextLine().toUpperCase();
+        // Option to save tweets to a .txt file
+        System.out.print("Do you want to save these tweets? [Y/N]: ");
+        String option = enterString().toUpperCase();
         
         // Save twits to a file if user inputs yes
         if (option.equals("Y")) {
-            FileWriter fileWriter = new FileWriter(new File("files" + File.separator + userName + "_twits.txt"));
+            FileWriter fileWriter = new FileWriter(new File("files" + File.separator + userName + "_tweets.txt"));
             try (BufferedWriter writer = new BufferedWriter(fileWriter)) {
                 // Write current date and time
-                writer.write("Twits from user "  + userName + " at " + dtf.format(ldt) +"\n\n");
+                writer.write("Tweets from user "  + userName + " at " + dtf.format(ldt) +"\n\n");
                 
                 // Scan all the twits and writes them to the file
                 for (Status status : statuses) {
-                    String twits = "Twit #" + twitNumber++ + "\n" + status.getText();
-                    writer.write(twits + "\n________________________________________________");
+                    String tweets = "Tweet #" + tweetNumber++ + "\n" + status.getText();
+                    writer.write(tweets + "\n________________________________________________");
                     writer.newLine();
                     writer.newLine();
                 }
             }
         }
+    }
+    
+    private static void getUserFavTweets() {
+        
     }
 }
