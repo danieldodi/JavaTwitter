@@ -4,6 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -18,7 +21,14 @@ import twitter4j.TwitterFactory;
  * @author Daniel
  */
 public class Main {
+    
     public static void main(String[] args) throws TwitterException, IOException {
+        // If files path doesn't exist, create that path
+        Path filesPath = Paths.get("files");
+        if (Files.notExists(filesPath)) {
+            new File("files").mkdir();
+        }
+        
         // Scanner for username input
         Scanner input = new Scanner(System.in);
         System.out.print("Enter username: ");
