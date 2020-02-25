@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
+import twitter4j.AccountTotals;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
@@ -59,7 +60,7 @@ public class Main {
                     System.out.print("Enter username: ");
                     user = enterString();
                     System.out.println("");
-                    getUserFavTweets();
+                    getUserFavTweets(TWITTER, user);
                     break;
                     
                 case 3:
@@ -77,6 +78,7 @@ public class Main {
                     
                 default:
                     System.out.println("Wrong input.\n");
+                    break;
             }
         }
     }
@@ -85,7 +87,7 @@ public class Main {
     private static int menu() {
         System.out.println("TWITTER4J MENU");
         System.out.println("1. Get user's last 20 tweets");
-        System.out.println("2. Get user's favourited tweet");
+        System.out.println("2. Get user's last 20 favourited tweets");
         System.out.println("3. Search tweets");
         System.out.println("4. Get API rate limit status");
         System.out.println("0. Exit");
@@ -105,7 +107,7 @@ public class Main {
         return string;
     }
 
-    // Method to retrieve last 20 twits from an user
+    // Method to retrieve last 20 tweets from an user
     private static void getUserTimeline(Twitter twitter, String user) throws TwitterException, IOException {
         List<Status> statuses = twitter.getUserTimeline(user);
         String userName = "@" + statuses.get(0).getUser().getScreenName();
@@ -146,9 +148,16 @@ public class Main {
         System.out.println("");
     }
     
-    // Methos to retrieve last favourited twits from an user
-    private static void getUserFavTweets() {
+    // Method to retrieve last favourited tweets from an user
+    private static void getUserFavTweets(Twitter twitter, String user) throws TwitterException {
+        int tweetNumber = 0;
+        List<Status> favTweets = twitter.getFavorites(user);
         
+        for (Status favTweet : favTweets) {
+            String favTweetsUser = "@" + favTweets.get(tweetNumber).getUser().getScreenName();
+            String tweets = "Tweet #" + (tweetNumber++ + 1) + " from user " + favTweetsUser + "\n" + favTweet.getText() + "\n________________________________________________";
+            System.out.println(tweets + "\n");
+        }
     }
     
     // Method to search tweets using a keyword
