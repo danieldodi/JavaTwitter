@@ -9,14 +9,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
-import twitter4j.Trend;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -73,7 +72,8 @@ public class Main {
                     break;
                     
                 case 4:
-                    getReplies();
+                    sortByFavs();
+                    break;
                     
                 case 5:
                 // Gets the API user and shows the rate limit status
@@ -94,7 +94,7 @@ public class Main {
         System.out.println("1. Get user's last 100 tweets");
         System.out.println("2. Get user's last 100 favourited tweets");
         System.out.println("3. Search tweets (100 max)");
-        System.out.println("4. Get replies from specific tweet");
+        System.out.println("4. Start listener to sort tweets with inputed keyword");
         System.out.println("5. Get API rate limit status");
         System.out.println("0. Exit");
         System.out.print("Option: ");
@@ -216,29 +216,23 @@ public class Main {
         System.out.println("");
     }
     
-    private static void getReplies() throws TwitterException, Exception {
-        Scanner input = new Scanner(System.in);
-        System.out.print("Enter tweet ID to retrieve replies: ");
-        long id = input.nextLong();
+    // I think this would work if I used a kind of real-time listener to store
+    // all the tweets and then sort them
+    private static void sortByFavs() throws TwitterException, Exception {
+        System.out.print("Enter search keyword: ");
+        String search = enterString();
         System.out.println("");
-        
-        Status status = TWITTER.showStatus(id);
-        
-        try {
-            System.out.println("Tweet from user " + "@" + status.getUser().getScreenName() + ": ");
-            System.out.println(status.getText() + "\n");
-            System.out.print("Is this the correct tweet? [Y/N]: ");
-            String answer = enterString().toUpperCase();
-            System.out.println("");
-            
-            if (answer.equals("Y")) {
-                List<Status> replies; // IDK HOW TO DO IT aaaAAAAAAAAAAAAAAAAAA
-                System.out.println("Replies to the tweet: ");
-            } else {
-                getReplies();
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+
+        // Filter tweets by a keyword, a hashtag...
+        Query filter = new Query(search);
+        filter.setCount(100);
+        QueryResult result = TWITTER.search(filter);
+        List<Status> replies = result.getTweets();
+        replies.sort(Comparator.comparing(Status::getFavoriteCount).reversed());
+
+        for (Status reply : replies) {
+            System.out.println("Reply from @" + reply.getUser().getScreenName() + " with " + reply.getFavoriteCount() + " likes\n" + reply.getText() + "\n\n");
         }
+ 
     }
 }
